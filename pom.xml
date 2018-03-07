@@ -7,8 +7,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>dm Retrylib Spring Boot Starter</name>
-    <description>Starter for the usage of the dm Retrylib offering a scheduled retry e. g. for calls to external systems.
+    <name>dm retrylib Spring Boot Starter</name>
+    <description>Starter for the usage of the dm retrylib offering a scheduled retry e. g. for calls to external systems.
     </description>
 
     <parent>
