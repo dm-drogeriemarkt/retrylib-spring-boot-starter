@@ -7,8 +7,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Retrylib Spring Boot Starter</name>
-    <description>Starter for the usage of the Retrylib offering a scheduled retry e. g. for calls to external systems.
+    <name>dm Retrylib Spring Boot Starter</name>
+    <description>Starter for the usage of the dm Retrylib offering a scheduled retry e. g. for calls to external systems.
     </description>
 
     <parent>
@@ -24,6 +24,18 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <dependency>
             <groupId>net.openhft</groupId>
             <artifactId>chronicle-map</artifactId>
