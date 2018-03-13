@@ -5,11 +5,14 @@ import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,10 +23,13 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableScheduling
+@EnableConfigurationProperties(RetrylibProperties.class)
 public class RetrylibAutoConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(RetrylibAutoConfiguration.class);
 
+    @Autowired
+    private RetrylibProperties retrylibProperties;
 
     @ConditionalOnMissingBean(RetryService.class)
     @Bean
@@ -52,15 +58,16 @@ public class RetrylibAutoConfiguration {
     }
 
     @Bean
-    public ChronicleMap<String, RetryEntity> retryMap(@Value("${retrylib.persistence.maxEntries:1000000}") Long maxEntries,
-                                                      @Value("${retrylib.persistence.averageValueSize:600}") Double averageValueSize,
-                                                      @Value("${retrylib.persistence.filePath}") String filePath,
-                                                      @Value("${retrylib.persistence.fileName}") String fileName) throws IOException {
-        if (filePath.isEmpty()) {
+    public ChronicleMap<String, RetryEntity> retryMap() throws IOException {
+
+        String filePath = retrylibProperties.getPersistence().getFilePath();
+        String fileName = retrylibProperties.getPersistence().getFileName();
+
+        if (StringUtils.isEmpty(filePath)) {
             filePath = System.getProperty("java.io.tmpdir");
         }
 
-        if (fileName.isEmpty()) {
+        if (StringUtils.isEmpty(fileName)) {
             fileName = "retryChronicleMap.dat";
         }
 
@@ -69,16 +76,16 @@ public class RetrylibAutoConfiguration {
         ChronicleMap<String, RetryEntity> retryMapWithoutRecovery = null;
 
         try {
-            retryMapWithoutRecovery = createChronicleMapBuilder(maxEntries, averageValueSize).createPersistedTo(new File(fileLocation));
+            retryMapWithoutRecovery = createChronicleMapBuilder(retrylibProperties.getPersistence().getMaxEntries(), retrylibProperties.getPersistence().getAverageValueSize()).createPersistedTo(new File(fileLocation));
             checkIfMapHasOnlyValidEntries(retryMapWithoutRecovery);
             return retryMapWithoutRecovery;
         } catch (IOException caughtException) {
-            return recoverMapFromInvalidHeader(maxEntries, averageValueSize, fileLocation, caughtException);
+            return recoverMapFromInvalidHeader(retrylibProperties.getPersistence().getMaxEntries(), retrylibProperties.getPersistence().getAverageValueSize(), fileLocation, caughtException);
         } catch (RuntimeException caughtException) {
             if (retryMapWithoutRecovery != null) {
                 retryMapWithoutRecovery.close();
             }
-            return recoverMapFromInvalidEntries(maxEntries, averageValueSize, fileLocation, caughtException);
+            return recoverMapFromInvalidEntries(retrylibProperties.getPersistence().getMaxEntries(), retrylibProperties.getPersistence().getAverageValueSize(), fileLocation, caughtException);
         }
     }
 
