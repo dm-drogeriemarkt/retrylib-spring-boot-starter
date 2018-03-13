@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.openhft.chronicle.map.ChronicleMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +13,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service
 public class RetryService {
 
     private static final Logger LOG = LoggerFactory.getLogger(RetryService.class);
@@ -26,7 +23,6 @@ public class RetryService {
 
     private final RetrylibProperties retrylibProperties;
 
-    @Autowired
     public RetryService(ObjectMapper objectMapper, @Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap, RetrylibProperties retrylibProperties) {
         this.objectMapper = objectMapper;
         this.retryEntities = retryMap;

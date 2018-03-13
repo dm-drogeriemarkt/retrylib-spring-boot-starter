@@ -57,6 +57,12 @@ public class RetrylibAutoConfiguration {
         };
     }
 
+    @ConditionalOnMissingBean(RetryAspect.class)
+    @Bean
+    public RetryAspect retryAspect(RetryService retryService) {
+        return new RetryAspect(retryService);
+    }
+
     @Bean
     public ChronicleMap<String, RetryEntity> retryMap() throws IOException {
 
