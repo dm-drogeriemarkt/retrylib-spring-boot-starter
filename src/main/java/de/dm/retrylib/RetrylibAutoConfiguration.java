@@ -34,7 +34,7 @@ public class RetrylibAutoConfiguration {
     @ConditionalOnMissingBean(RetryService.class)
     @Bean
     public RetryService retryService(ObjectMapper objectMapper, @Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap) {
-        return new RetryService(objectMapper, retryMap);
+        return new RetryService(objectMapper, retryMap, retrylibProperties);
     }
 
     @ConditionalOnMissingBean(RetryProcessor.class)

@@ -24,17 +24,23 @@ public class RetryService {
 
     private final ObjectMapper objectMapper;
 
+    private final RetrylibProperties retrylibProperties;
+
     @Autowired
-    public RetryService(ObjectMapper objectMapper,  @Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap) {
+    public RetryService(ObjectMapper objectMapper, @Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap, RetrylibProperties retrylibProperties) {
         this.objectMapper = objectMapper;
         this.retryEntities = retryMap;
+        this.retrylibProperties = retrylibProperties;
     }
 
-    public void queueForRetry(String retryType, Object payload) {
+    public synchronized void queueForRetry(String retryType, Object payload) {
         try {
             String payloadAsJson = objectMapper.writeValueAsString(payload);
             String key = retryType + "_" + UUID.randomUUID().toString();
             RetryEntity retryEntity = new RetryEntity(key, retryType, payloadAsJson);
+            if (retryEntities.longSize() == retrylibProperties.getPersistence().getMaxEntries()) {
+                throw new IllegalStateException("MaxEntries of " + retrylibProperties.getPersistence().getMaxEntries() + " reached while trying to add a new RetryEntity for retryType " + retryType + " and payload " + payloadAsJson);
+            }
             retryEntities.putIfAbsent(key, retryEntity);
             LOG.info("Queued for retry: {}", retryEntity);
         } catch (JsonProcessingException e) {
