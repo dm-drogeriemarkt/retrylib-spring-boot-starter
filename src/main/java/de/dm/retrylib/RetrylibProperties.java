@@ -21,9 +21,9 @@ public class RetrylibProperties {
 
         private Double averageValueSize = 600.0;
 
-        private String filePath;
+        private String filePath = System.getProperty("java.io.tmpdir");
 
-        private String fileName;
+        private String fileName = "retryChronicleMap.dat";
 
 
         public Long getMaxEntries() {
