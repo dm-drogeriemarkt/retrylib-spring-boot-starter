@@ -28,7 +28,7 @@ public class RetryAspect {
     public Object runWithRetry(ProceedingJoinPoint joinPoint) throws Error { //NOSONAR Always propagate Errors further
         try {
             return joinPoint.proceed();
-        } catch (Error error) {
+        } catch (Error error) { //NOSONAR we have to catch Errors here because they must pe propagated further
             queueInvocationForRetry(joinPoint, error);
             // Always propagate Errors further
             throw error;
