@@ -33,7 +33,7 @@ public class RetryServiceUnitTest {
 
     @Test(expected = IllegalStateException.class)
     public void queueForRetryThrowsIllegalStateExceptionOnLimitReached() {
-        RetrylibProperties.PersistenceProperties persistenceProperties = mock(RetrylibProperties.PersistenceProperties.class);
+        PersistenceProperties persistenceProperties = mock(PersistenceProperties.class);
         when(retrylibProperties.getPersistence()).thenReturn(persistenceProperties);
         when(persistenceProperties.getMaxEntries()).thenReturn(5L);
         when(chronicleMap.longSize()).thenReturn(5L);
@@ -47,7 +47,7 @@ public class RetryServiceUnitTest {
         String payload = "payload";
         String payloadAsString = objectMapper.writeValueAsString(payload);
 
-        RetrylibProperties.PersistenceProperties persistenceProperties = mock(RetrylibProperties.PersistenceProperties.class);
+        PersistenceProperties persistenceProperties = mock(PersistenceProperties.class);
         when(retrylibProperties.getPersistence()).thenReturn(persistenceProperties);
         when(persistenceProperties.getMaxEntries()).thenReturn(1L);
         when(chronicleMap.longSize()).thenReturn(5L);

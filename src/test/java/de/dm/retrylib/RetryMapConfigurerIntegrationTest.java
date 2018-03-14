@@ -18,11 +18,11 @@ public class RetryMapConfigurerIntegrationTest {
 
     private RetryMapConfigurer retryMapConfigurer;
     private RetrylibProperties retrylibProperties;
-    private RetrylibProperties.PersistenceProperties persistenceProperties;
+    private PersistenceProperties persistenceProperties;
 
     @Before
     public void setUp() {
-        persistenceProperties = new RetrylibProperties.PersistenceProperties();
+        persistenceProperties = new PersistenceProperties();
         retrylibProperties = new RetrylibProperties();
         retryMapConfigurer = new RetryMapConfigurer(retrylibProperties);
     }
