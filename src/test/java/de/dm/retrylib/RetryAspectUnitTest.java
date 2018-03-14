@@ -65,4 +65,10 @@ public class RetryAspectUnitTest {
         verify(proceedingJoinPoint).proceed();
         verify(retryService).queueForRetry(retryHandler.retryType(), payload);
     }
+
+    @Test
+    public void retryableMethodsPointcutExistsAndCanBeInvoked() {
+        retryAspect.retryableMethods();
+    }
+
 }
