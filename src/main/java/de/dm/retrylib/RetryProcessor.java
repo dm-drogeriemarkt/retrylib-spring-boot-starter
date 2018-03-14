@@ -7,6 +7,7 @@ import org.springframework.core.GenericTypeResolver;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public class RetryProcessor {
@@ -23,7 +24,7 @@ public class RetryProcessor {
 
     public RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, ObjectMapper objectMapper) {
         this.retryService = retryService;
-        this.retryHandlers = retryHandlers;
+        this.retryHandlers = Collections.unmodifiableList(retryHandlers);
         this.objectMapper = objectMapper;
     }
 

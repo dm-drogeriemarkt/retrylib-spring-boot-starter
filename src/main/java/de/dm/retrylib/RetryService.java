@@ -34,7 +34,7 @@ public class RetryService {
             String payloadAsJson = objectMapper.writeValueAsString(payload);
             String key = retryType + "_" + UUID.randomUUID().toString();
             RetryEntity retryEntity = new RetryEntity(key, retryType, payloadAsJson);
-            if (retryEntities.longSize() == retrylibProperties.getPersistence().getMaxEntries()) {
+            if (retrylibProperties.getPersistence().getMaxEntries().equals(retryEntities.longSize())) {
                 throw new IllegalStateException("MaxEntries of " + retrylibProperties.getPersistence().getMaxEntries() + " reached while trying to add a new RetryEntity for retryType " + retryType + " and payload " + payloadAsJson);
             }
             retryEntities.putIfAbsent(key, retryEntity);
