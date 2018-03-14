@@ -41,6 +41,7 @@ public class RetryService {
             LOG.info("Queued for retry: {}", retryEntity);
         } catch (JsonProcessingException e) {
             LOG.error("Could not serialize object to json: {}", payload, e);
+            throw new IllegalStateException("Could not serialize object to json: " + payload, e);
         }
     }
 

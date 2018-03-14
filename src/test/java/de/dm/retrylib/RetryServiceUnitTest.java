@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,13 +22,12 @@ import static org.mockito.Mockito.when;
 public class RetryServiceUnitTest {
 
     private RetryService retryService;
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = mock(ObjectMapper.class);
     private ChronicleMap chronicleMap = mock(ChronicleMap.class);
     private RetrylibProperties retrylibProperties = mock(RetrylibProperties.class);
 
     @Before
     public void setUp() {
-        objectMapper = new ObjectMapper();
         retryService = new RetryService(objectMapper, chronicleMap, retrylibProperties);
     }
 
@@ -37,6 +37,13 @@ public class RetryServiceUnitTest {
         when(retrylibProperties.getPersistence()).thenReturn(persistenceProperties);
         when(persistenceProperties.getMaxEntries()).thenReturn(5L);
         when(chronicleMap.longSize()).thenReturn(5L);
+
+        retryService.queueForRetry("retryType", "payload");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void queueForRetryThrowsIllegalStateExceptionOnJsonProcessingException() throws Exception {
+        when(objectMapper.writeValueAsString(anyObject())).thenThrow(mock(JsonProcessingException.class));
 
         retryService.queueForRetry("retryType", "payload");
     }
