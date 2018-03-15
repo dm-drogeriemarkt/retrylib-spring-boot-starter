@@ -56,8 +56,13 @@ public class RetrylibAutoConfiguration {
     }
 
     @Bean
-    public ChronicleMap<String, RetryEntity> retryMap() throws IOException {
-        RetryMapConfigurer retryMapConfigurer = new RetryMapConfigurer(retrylibProperties);
+    public RetryMapConfigurer retryMapConfigurer() {
+        return new RetryMapConfigurer(retrylibProperties);
+    }
+
+    @Bean
+    public ChronicleMap<String, RetryEntity> retryMap(RetryMapConfigurer retryMapConfigurer) throws IOException {
         return retryMapConfigurer.configureChronicleMap();
     }
+
 }
