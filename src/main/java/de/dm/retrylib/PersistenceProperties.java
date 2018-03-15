@@ -2,7 +2,7 @@ package de.dm.retrylib;
 
 public class PersistenceProperties {
 
-    private static final Long DEFAULT_MAX_ENTRIES = 1000000L;
+    private static final Long DEFAULT_MAX_ENTRIES = 100000L;
     private static final Double DEFAULT_AVERAGE_VALUE_SIZE = 600.0;
     private static final String DEFAULT_FILE_PATH = System.getProperty("java.io.tmpdir");
     private static final String DEFAULT_FILE_NAME = "retryChronicleMap.dat";
