@@ -65,4 +65,9 @@ public class RetrylibAutoConfiguration {
         return retryMapConfigurer.configureChronicleMap();
     }
 
+    @Bean
+    public RetryMapHealthIndicator retryHandlerHealthIndicator(@Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap) {
+        return new RetryMapHealthIndicator(retryMap, retrylibProperties.getHealthProperties().getQueueWarnThreshold(), retrylibProperties.getHealthProperties().getQueueErrorThreshold());
+    }
+
 }

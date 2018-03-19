@@ -17,4 +17,14 @@ public class RetrylibProperties {
         this.persistence = persistence;
     }
 
+    @NestedConfigurationProperty
+    private HealthProperties healthProperties = new HealthProperties();
+
+    public HealthProperties getHealthProperties() {
+        return healthProperties;
+    }
+
+    public void setHealthProperties(HealthProperties healthProperties) {
+        this.healthProperties = healthProperties;
+    }
 }
