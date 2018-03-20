@@ -6,18 +6,14 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Aspect
-@Component
 public class RetryAspect {
 
     private static final Logger LOG = LoggerFactory.getLogger(RetryAspect.class);
 
     private final RetryService retryService;
 
-    @Autowired
     public RetryAspect(RetryService retryService) {
         this.retryService = retryService;
     }
@@ -29,18 +25,26 @@ public class RetryAspect {
 
     @Around(value = "retryableMethods()",
             argNames = "joinPoint")
-    public Object runWithRetry(ProceedingJoinPoint joinPoint) {
+    public Object runWithRetry(ProceedingJoinPoint joinPoint) throws Error { //NOSONAR Always propagate Errors further
         try {
             return joinPoint.proceed();
-        } catch (Throwable throwable) {
-            Object[] invocationArguments = joinPoint.getArgs();
-            Object payload = invocationArguments[0];
-            RetryHandler retryHandler = (RetryHandler) joinPoint.getTarget();
-            LOG.error("An exception occurred when processing retryable method. Scheduling call for retry.", payload, throwable);
-            retryService.queueForRetry(retryHandler.retryType(), payload);
-            //Return null since this annotation is meant to be used on void methods only
+        } catch (Error error) { //NOSONAR we have to catch Errors here because they must pe propagated further
+            queueInvocationForRetry(joinPoint, error);
+            // Always propagate Errors further
+            throw error;
+        } catch (Throwable throwable) { //NOSONAR the ProceedingJoinPoint signature forces us to catch Throwable here
+            queueInvocationForRetry(joinPoint, throwable);
+            // Return null since this annotation is meant to be used on void methods only
             return null;
         }
+    }
+
+    private void queueInvocationForRetry(ProceedingJoinPoint joinPoint, Throwable throwable) {
+        Object[] invocationArguments = joinPoint.getArgs();
+        Object payload = invocationArguments[0];
+        RetryHandler retryHandler = (RetryHandler) joinPoint.getTarget();
+        LOG.error("An exception occurred when processing retryable method. Scheduling call for retry.", payload, throwable);
+        retryService.queueForRetry(retryHandler.retryType(), payload);
     }
 
 }

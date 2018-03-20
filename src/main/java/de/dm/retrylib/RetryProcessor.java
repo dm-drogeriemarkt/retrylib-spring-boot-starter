@@ -3,15 +3,13 @@ package de.dm.retrylib;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
-@Component
 public class RetryProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RetryProcessor.class);
@@ -24,10 +22,9 @@ public class RetryProcessor {
 
     private final ObjectMapper objectMapper;
 
-    @Autowired
     public RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, ObjectMapper objectMapper) {
         this.retryService = retryService;
-        this.retryHandlers = retryHandlers;
+        this.retryHandlers = Collections.unmodifiableList(retryHandlers);
         this.objectMapper = objectMapper;
     }
 
