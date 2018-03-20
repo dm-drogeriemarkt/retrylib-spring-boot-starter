@@ -48,10 +48,16 @@ Implement the `handleWithRetry()` method with the actual call to your external s
 
 Implement the `retryType()` method returning a unique retry type string that is used by dm retrylib to find the correct RetryHandler implementation for a specific retry entry.  
 
-
 ## Configuration properties
 
-TODO
+| Property name  | Description |
+| ----------- | ----------- |
+| retrylib.health.queueErrorThreshold | The amount of unprocessed retry messages that can be in the map before the health status will be DOWN. Default: `9` |
+| retrylib.health.queueWarnThreshold | The amount of unprocessed retry messages that can be in the map before the health status will be WARN. Default: `0` |
+| retrylib.persistence.averageValueSize | The average value size of the serialized payload in bytes. Default: `600` |
+| retrylib.persistence.fileName | The name of the file containing the retry entries. Default: `retryChronicleMap.dat` |
+| retrylib.persistence.filePath | The path to the file containing the retry entries. Default: Value of `java.io.tmpdir` env variable |
+| retrylib.persistence.maxEntries | The maximum entries that can be saved in persistence. If this value is exceeded an Exception will be thrown and no further retry entries will be added to the map. Default: `100000` |
 
 ## License
 
