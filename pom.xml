@@ -19,6 +19,27 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <organization>dm-drogerie markt GmbH + Co. KG</organization>
+            <organizationUrl>https://dm.de</organizationUrl>
+            <name>Markus Kiss</name>
+            <email>markus.kiss@dm.de</email>
+        </developer>
+        <developer>
+            <organization>dm-drogerie markt GmbH + Co. KG</organization>
+            <organizationUrl>https://dm.de</organizationUrl>
+            <name>Patrick Hofmann</name>
+            <email>patrick.hofmann@dm.de</email>
+        </developer>
+        <developer>
+            <organization>dm-drogerie markt GmbH + Co. KG</organization>
+            <organizationUrl>https://dm.de</organizationUrl>
+            <name>Arnold Franke</name>
+            <email>arnold.franke@dm.de</email>
+        </developer>
+    </developers>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
