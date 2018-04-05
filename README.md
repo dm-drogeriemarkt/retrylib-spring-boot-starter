@@ -61,7 +61,7 @@ Implement the `retryType()` method returning a unique retry type string that is 
 
 ## License
 
-Copyright (c) 2018 dm-drogerie markt GmbH + Co. KG, https://www.dm.de
+Copyright (c) 2018 dm-drogerie markt GmbH + Co. KG, https://dm.de
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

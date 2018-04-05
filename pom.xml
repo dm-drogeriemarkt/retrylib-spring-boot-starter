@@ -11,6 +11,14 @@
     <description>Starter for the usage of the dm retrylib offering a scheduled retry e. g. for calls to external systems.
     </description>
 
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
