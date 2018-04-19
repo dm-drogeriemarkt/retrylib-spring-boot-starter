@@ -8,8 +8,8 @@ import org.springframework.boot.actuate.health.Status;
 
 /**
  * HealthIndicator that checks the amount of retryable entries in the Chronicle Map.
- * Returns Status.UP if queue.size() <= queueDownThreshold and queue.size() < queueWarnThreshold.
- * Returns Status.WARN if queueWarnThreshold < queue.size() <= queueDownThreshold.
+ * Returns Status.UP if queue.size() {@literal <}= queueDownThreshold and queue.size() {@literal <} queueWarnThreshold.
+ * Returns Status.WARN if queueWarnThreshold {@literal <} queue.size() {@literal <}= queueDownThreshold.
  * Returns Status.DOWN in every other case.
  */
 
