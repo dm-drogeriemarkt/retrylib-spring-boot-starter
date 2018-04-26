@@ -1,5 +1,7 @@
 # dm retrylib
 
+[![Build Status](https://travis-ci.org/dm-drogeriemarkt/retrylib-spring-boot-starter.svg?branch=master)](https://travis-ci.org/dm-drogeriemarkt/retrylib-spring-boot-starter)
+
 dm retrylib offers a Java-based retry mechanism with persistence needed for all situations where calls to external services can fail and should be retried periodically until they proceed successfully. 
 
 It uses [ChronicleMap](https://github.com/OpenHFT/Chronicle-Map) under the hood which offers lightweight file-based persistence without the need of a dedicated database server.
