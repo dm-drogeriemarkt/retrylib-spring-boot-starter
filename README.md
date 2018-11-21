@@ -18,7 +18,7 @@ First, include the dm retrylib Spring Boot Starter dependency in your pom.xml:
         <dependency>
             <groupId>de.dm.retrylib</groupId>
             <artifactId>retrylib-spring-boot-starter</artifactId>
-            <version>0.9.1</version>
+            <version>1.0.1</version>
          </dependency>
     </dependencies>
 </project>
