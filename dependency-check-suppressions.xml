@@ -8,4 +8,20 @@
         <gav regex="true">^net\.openhft:affinity:.*$</gav>
         <cve>CVE-2018-13752</cve>
     </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+   file name: jackson-databind-2.8.11.3.jar
+   ]]></notes>
+        <gav regex="true">^com\.fasterxml\.jackson\.core:jackson-databind:.*$</gav>
+        <cpe>cpe:/a:fasterxml:jackson</cpe>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+   file name: jackson-databind-2.8.11.3.jar
+   ]]></notes>
+        <gav regex="true">^com\.fasterxml\.jackson\.core:jackson-databind:.*$</gav>
+        <cpe>cpe:/a:fasterxml:jackson-databind</cpe>
+    </suppress>
 </suppressions>
