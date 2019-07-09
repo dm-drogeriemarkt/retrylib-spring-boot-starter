@@ -4,6 +4,4 @@ public interface RetryHandler<T> {
 
     void handleWithRetry(T payload);
 
-    String retryType();
-
 }

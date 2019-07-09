@@ -1,12 +1,9 @@
 package de.dm.retrylib;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.GenericTypeResolver;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 

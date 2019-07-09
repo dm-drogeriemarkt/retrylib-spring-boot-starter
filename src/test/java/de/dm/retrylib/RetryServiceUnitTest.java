@@ -1,22 +1,15 @@
 package de.dm.retrylib;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static java.util.function.Predicate.isEqual;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.eq;
 
 public class RetryServiceUnitTest {
 
@@ -25,11 +18,6 @@ public class RetryServiceUnitTest {
     private RetryHandler<String> demoRetryHandler = new RetryHandler<String>() {
         @Override
         public void handleWithRetry(String payload) {
-        }
-
-        @Override
-        public String retryType() {
-            return "retryType";
         }
     };
     private LinkedBlockingQueue<RetryEntity> retryEntities;

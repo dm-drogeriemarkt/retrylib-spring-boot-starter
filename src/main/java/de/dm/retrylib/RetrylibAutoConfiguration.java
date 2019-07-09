@@ -1,6 +1,5 @@
 package de.dm.retrylib;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,11 +38,6 @@ public class RetrylibAutoConfiguration {
             @Override
             public void handleWithRetry(Object payload) {
                 // Noop implementation
-            }
-
-            @Override
-            public String retryType() {
-                return "";
             }
         };
     }
