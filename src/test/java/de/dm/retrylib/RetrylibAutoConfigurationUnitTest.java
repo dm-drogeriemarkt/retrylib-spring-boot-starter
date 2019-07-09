@@ -1,7 +1,6 @@
 package de.dm.retrylib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.openhft.chronicle.map.ChronicleMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.StringUtils;
@@ -12,14 +11,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class RetrylibAutoConfigurationUnitTest {
 
     private RetrylibAutoConfiguration retrylibAutoConfiguration;
     private ObjectMapper objectMapper;
-
-    private ChronicleMap<String, RetryEntity> chronicleMap = mock(ChronicleMap.class);
 
     @Before
     public void setUp() {
@@ -29,7 +25,7 @@ public class RetrylibAutoConfigurationUnitTest {
 
     @Test
     public void createRetryServiceBeanSuccessfully() {
-        RetryService retryService = retrylibAutoConfiguration.retryService(objectMapper, chronicleMap);
+        RetryService retryService = retrylibAutoConfiguration.retryService(objectMapper);
         assertThat(retryService, notNullValue());
     }
 
@@ -53,18 +49,4 @@ public class RetrylibAutoConfigurationUnitTest {
         RetryAspect retryAspect = retrylibAutoConfiguration.retryAspect(mock(RetryService.class));
         assertThat(retryAspect, notNullValue());
     }
-
-    @Test
-    public void createRetryMapConfigurerBeanSuccessfully() {
-        assertThat(retrylibAutoConfiguration.retryMapConfigurer(), notNullValue());
-    }
-
-    @Test
-    public void createRetryMapBeanSuccessfully() throws Exception {
-        RetryMapConfigurer retryMapConfigurer = mock(RetryMapConfigurer.class);
-        when(retryMapConfigurer.configureChronicleMap()).thenReturn(chronicleMap);
-
-        assertThat(retrylibAutoConfiguration.retryMap(retryMapConfigurer), is(chronicleMap));
-    }
-
 }

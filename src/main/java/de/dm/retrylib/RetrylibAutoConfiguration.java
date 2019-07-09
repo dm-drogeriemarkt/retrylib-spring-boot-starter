@@ -1,17 +1,15 @@
 package de.dm.retrylib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.openhft.chronicle.map.ChronicleMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Configuration
 @EnableScheduling
@@ -23,8 +21,9 @@ public class RetrylibAutoConfiguration {
 
     @ConditionalOnMissingBean(RetryService.class)
     @Bean
-    public RetryService retryService(ObjectMapper objectMapper, @Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap) {
-        return new RetryService(objectMapper, retryMap, retrylibProperties);
+    public RetryService retryService(ObjectMapper objectMapper) {
+        LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>(5);
+        return new RetryService(objectMapper, retryEntities, retrylibProperties);
     }
 
     @ConditionalOnMissingBean(RetryProcessor.class)
@@ -53,21 +52,6 @@ public class RetrylibAutoConfiguration {
     @Bean
     public RetryAspect retryAspect(RetryService retryService) {
         return new RetryAspect(retryService);
-    }
-
-    @Bean
-    public RetryMapConfigurer retryMapConfigurer() {
-        return new RetryMapConfigurer(retrylibProperties);
-    }
-
-    @Bean
-    public ChronicleMap<String, RetryEntity> retryMap(RetryMapConfigurer retryMapConfigurer) throws IOException {
-        return retryMapConfigurer.configureChronicleMap();
-    }
-
-    @Bean
-    public RetryMapHealthIndicator retryHandlerHealthIndicator(@Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap) {
-        return new RetryMapHealthIndicator(retryMap, retrylibProperties.getHealthProperties().getQueueWarnThreshold(), retrylibProperties.getHealthProperties().getQueueErrorThreshold());
     }
 
 }

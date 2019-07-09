@@ -7,17 +7,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class RetrylibProperties {
 
     @NestedConfigurationProperty
-    private PersistenceProperties persistence = new PersistenceProperties();
-
-    public PersistenceProperties getPersistence() {
-        return persistence;
-    }
-
-    public void setPersistence(PersistenceProperties persistence) {
-        this.persistence = persistence;
-    }
-
-    @NestedConfigurationProperty
     private HealthProperties healthProperties = new HealthProperties();
 
     public HealthProperties getHealthProperties() {
