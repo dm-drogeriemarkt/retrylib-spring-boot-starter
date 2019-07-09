@@ -44,7 +44,7 @@ public class RetryAspect {
         Object payload = invocationArguments[0];
         RetryHandler retryHandler = (RetryHandler) joinPoint.getTarget();
         LOG.error("An exception occurred when processing retryable method. Scheduling call for retry.", payload, throwable);
-        retryService.queueForRetry(retryHandler.retryType(), payload);
+        retryService.queueForRetry(retryHandler.getClass(), payload);
     }
 
 }

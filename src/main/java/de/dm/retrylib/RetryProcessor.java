@@ -20,12 +20,9 @@ public class RetryProcessor {
 
     private final List<RetryHandler> retryHandlers;
 
-    private final ObjectMapper objectMapper;
-
-    public RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, ObjectMapper objectMapper) {
+    public RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers) {
         this.retryService = retryService;
         this.retryHandlers = Collections.unmodifiableList(retryHandlers);
-        this.objectMapper = objectMapper;
     }
 
     @Scheduled(fixedRate = 60000)
@@ -39,24 +36,13 @@ public class RetryProcessor {
     private void processRetryEntity(RetryEntity retryEntity) {
         LOG.info("Processing retry entry {}", retryEntity);
         RetryHandler retryHandler = getRetryHandlerForType(retryEntity.getRetryType());
-        Class<?> payloadType = GenericTypeResolver.resolveTypeArgument(retryHandler.getClass(), RetryHandler.class);
-        Object deserializedPayload = deserialize(payloadType, retryEntity.getPayload());
-        retryService.deleteRetryEntity(retryEntity);
-        retryHandler.handleWithRetry(deserializedPayload);
+        retryHandler.handleWithRetry(retryEntity.getPayload());
     }
 
-    private <T> T deserialize(Class<T> targetClass, String payload) {
-        try {
-            return objectMapper.readValue(payload, targetClass);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Could not deserialize payload: " + payload + " for target " + targetClass, e);
-        }
-    }
-
-    private RetryHandler<?> getRetryHandlerForType(String retryType) {
+    private RetryHandler<?> getRetryHandlerForType(Class retryType) {
         return retryHandlers
                 .stream()
-                .filter(it -> retryType.equals(it.retryType()))
+                .filter(it -> retryType.equals(it.getClass()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No retryHandler found for type " + retryType));
     }

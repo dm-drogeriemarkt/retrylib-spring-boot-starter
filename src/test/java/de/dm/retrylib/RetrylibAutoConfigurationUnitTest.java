@@ -25,13 +25,13 @@ public class RetrylibAutoConfigurationUnitTest {
 
     @Test
     public void createRetryServiceBeanSuccessfully() {
-        RetryService retryService = retrylibAutoConfiguration.retryService(objectMapper);
+        RetryService retryService = retrylibAutoConfiguration.retryService();
         assertThat(retryService, notNullValue());
     }
 
     @Test
     public void createRetryProcessorBeanSuccessfully() {
-        RetryProcessor retryProcessor = retrylibAutoConfiguration.retryProcessor(mock(RetryService.class), Collections.emptyList(), objectMapper);
+        RetryProcessor retryProcessor = retrylibAutoConfiguration.retryProcessor(mock(RetryService.class), Collections.emptyList());
         assertThat(retryProcessor, notNullValue());
     }
 

@@ -46,7 +46,7 @@ public class RetryAspectUnitTest {
         retryAspect.runWithRetry(proceedingJoinPoint);
 
         verify(proceedingJoinPoint).proceed();
-        verify(retryService).queueForRetry(retryHandler.retryType(), payload);
+        verify(retryService).queueForRetry(retryHandler.getClass(), payload);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class RetryAspectUnitTest {
         assertThat(returnValue, CoreMatchers.nullValue());
 
         verify(proceedingJoinPoint).proceed();
-        verify(retryService).queueForRetry(retryHandler.retryType(), payload);
+        verify(retryService).queueForRetry(retryHandler.getClass(), payload);
     }
 
     @Test

@@ -8,11 +8,11 @@ public class RetryEntity implements Serializable {
 
     private final String key;
 
-    private final String retryType;
+    private final Class retryType;
 
-    private final String payload;
+    private final Object payload;
 
-    public RetryEntity(String key, String retryType, String payload) {
+    public RetryEntity(String key, Class retryType, Object payload) {
         this.key = key;
         this.retryType = retryType;
         this.payload = payload;
@@ -22,11 +22,11 @@ public class RetryEntity implements Serializable {
         return key;
     }
 
-    public String getRetryType() {
+    public Class getRetryType() {
         return retryType;
     }
 
-    public String getPayload() {
+    public Object getPayload() {
         return payload;
     }
 

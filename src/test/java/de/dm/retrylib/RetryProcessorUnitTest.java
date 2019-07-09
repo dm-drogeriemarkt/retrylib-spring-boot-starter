@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -36,20 +38,18 @@ public class RetryProcessorUnitTest {
         }
     };
 
-    private ObjectMapper objectMapper = mock(ObjectMapper.class);
-
     @Before
     public void setUp() {
         validRetryHandler = spy(validRetryHandler);
 
         retryHandlers = new ArrayList<>();
         retryHandlers.add(validRetryHandler);
-        retryProcessor = new RetryProcessor(retryService, retryHandlers, objectMapper);
+        retryProcessor = new RetryProcessor(retryService, retryHandlers);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void processNextRetryBatchThrowsExceptionWhenNoHandlerIsAvailable() {
-        RetryEntity retryEntity = new RetryEntity("key", "retryTypeNotAvailable", "payload");
+        RetryEntity retryEntity = new RetryEntity("key", String.class, "payload");
         List<RetryEntity> retryEntities = Collections.singletonList(retryEntity);
 
         when(retryService.loadNextRetryEntities(anyInt())).thenReturn(retryEntities);
@@ -61,26 +61,16 @@ public class RetryProcessorUnitTest {
 
     @Test
     public void processNextRetryBatchTriggersRetry() {
-        RetryEntity retryEntity = new RetryEntity("key", validRetryHandler.retryType(), "payload");
-        List<RetryEntity> retryEntities = Collections.singletonList(retryEntity);
+        RetryEntity retryEntity1 = new RetryEntity("key1", validRetryHandler.getClass(), "payload1");
+        RetryEntity retryEntity2 = new RetryEntity("key2", validRetryHandler.getClass(), "payload2");
+        List<RetryEntity> retryEntities = Arrays.asList(retryEntity1, retryEntity2);
 
         when(retryService.loadNextRetryEntities(anyInt())).thenReturn(retryEntities);
-        retryProcessor.processNextRetryBatch();
-
-        verify(retryService).deleteRetryEntity(retryEntity);
-        verify(validRetryHandler).handleWithRetry(any());
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void processNextRetryBatchThrowsExceptionWhenDeserializationHasFailed() throws Exception {
-        RetryEntity retryEntity = new RetryEntity("key", validRetryHandler.retryType(), "payload");
-        List<RetryEntity> retryEntities = Collections.singletonList(retryEntity);
-
-        when(retryService.loadNextRetryEntities(anyInt())).thenReturn(retryEntities);
-        when(objectMapper.readValue(anyString(), eq(String.class))).thenThrow(new IOException("provoked exception"));
 
         retryProcessor.processNextRetryBatch();
+
+        verify(validRetryHandler).handleWithRetry("payload1");
+        verify(validRetryHandler).handleWithRetry("payload2");
     }
 
 }

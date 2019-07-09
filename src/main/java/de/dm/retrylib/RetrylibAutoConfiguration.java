@@ -21,15 +21,15 @@ public class RetrylibAutoConfiguration {
 
     @ConditionalOnMissingBean(RetryService.class)
     @Bean
-    public RetryService retryService(ObjectMapper objectMapper) {
+    public RetryService retryService() {
         LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>(5);
-        return new RetryService(objectMapper, retryEntities, retrylibProperties);
+        return new RetryService(retryEntities);
     }
 
     @ConditionalOnMissingBean(RetryProcessor.class)
     @Bean
-    public RetryProcessor retryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, ObjectMapper objectMapper) {
-        return new RetryProcessor(retryService, retryHandlers, objectMapper);
+    public RetryProcessor retryProcessor(RetryService retryService, List<RetryHandler> retryHandlers) {
+        return new RetryProcessor(retryService, retryHandlers);
     }
 
     @ConditionalOnMissingBean(RetryHandler.class)
