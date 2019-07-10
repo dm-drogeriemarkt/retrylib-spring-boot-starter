@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -22,7 +23,7 @@ public class RetrylibAutoConfigurationUnitTest {
 
     @Test
     public void createRetryServiceBeanSuccessfully() {
-        RetryService retryService = retrylibAutoConfiguration.retryService(retrylibProperties);
+        RetryService retryService = retrylibAutoConfiguration.retryService(new LinkedBlockingQueue<>());
         assertThat(retryService, notNullValue());
     }
 
