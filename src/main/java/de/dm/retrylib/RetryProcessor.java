@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.Collections;
 import java.util.List;
 
-public class RetryProcessor {
+class RetryProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RetryProcessor.class);
 
@@ -17,13 +17,13 @@ public class RetryProcessor {
 
     private final List<RetryHandler> retryHandlers;
 
-    public RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers) {
+    RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers) {
         this.retryService = retryService;
         this.retryHandlers = Collections.unmodifiableList(retryHandlers);
     }
 
     @Scheduled(fixedRate = 60000)
-    public void processNextRetryBatch() {
+    void processNextRetryBatch() {
         LOG.info("Scheduling the next batch of {} retry entries...", BATCH_SIZE);
         List<RetryEntity> retryBatch = retryService.loadNextRetryEntities(BATCH_SIZE);
         retryBatch.forEach(this::processRetryEntity);

@@ -14,9 +14,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Configuration
 @EnableScheduling
 @EnableConfigurationProperties(RetrylibProperties.class)
-public class RetrylibAutoConfiguration {
+class RetrylibAutoConfiguration {
 
-    @ConditionalOnMissingBean(RetryService.class)
     @Bean
     RetryService retryService(LinkedBlockingQueue<RetryEntity> retryEntities) {
         return new RetryService(retryEntities);
@@ -29,7 +28,6 @@ public class RetrylibAutoConfiguration {
         return retryEntities;
     }
 
-    @ConditionalOnMissingBean(RetryProcessor.class)
     @Bean
     RetryProcessor retryProcessor(RetryService retryService, List<RetryHandler> retryHandlers) {
         return new RetryProcessor(retryService, retryHandlers);
@@ -38,15 +36,11 @@ public class RetrylibAutoConfiguration {
     @ConditionalOnMissingBean(RetryHandler.class)
     @Bean
     RetryHandler noOpRetryHandler() {
-        return new RetryHandler() {
-            @Override
-            public void handleWithRetry(Object payload) {
-                // Noop implementation
-            }
+        return payload -> {
+            // Noop implementation
         };
     }
 
-    @ConditionalOnMissingBean(RetryAspect.class)
     @Bean
     RetryAspect retryAspect(RetryService retryService) {
         return new RetryAspect(retryService);

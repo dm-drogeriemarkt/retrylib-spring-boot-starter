@@ -2,7 +2,7 @@ package de.dm.retrylib;
 
 import java.io.Serializable;
 
-public class RetryEntity implements Serializable {
+class RetryEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -12,21 +12,21 @@ public class RetryEntity implements Serializable {
 
     private final Object payload;
 
-    public RetryEntity(String key, Class retryType, Object payload) {
+    RetryEntity(String key, Class retryType, Object payload) {
         this.key = key;
         this.retryType = retryType;
         this.payload = payload;
     }
 
-    public String getKey() {
+    String getKey() {
         return key;
     }
 
-    public Class getRetryType() {
+    Class getRetryType() {
         return retryType;
     }
 
-    public Object getPayload() {
+    Object getPayload() {
         return payload;
     }
 
