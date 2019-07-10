@@ -19,7 +19,7 @@ class RetryAspect {
     }
 
     @Pointcut("execution(* *..RetryHandler+.handleWithRetry(..)))")
-    public void retryableMethods() {
+    void retryableMethods() {
         // empty method for joinpoint definition
     }
 
