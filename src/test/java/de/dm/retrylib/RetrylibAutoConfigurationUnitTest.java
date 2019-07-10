@@ -1,6 +1,5 @@
 package de.dm.retrylib;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,11 +12,9 @@ import static org.mockito.Mockito.mock;
 public class RetrylibAutoConfigurationUnitTest {
 
     private RetrylibAutoConfiguration retrylibAutoConfiguration;
-    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() {
-        objectMapper = new ObjectMapper();
         retrylibAutoConfiguration = new RetrylibAutoConfiguration();
     }
 
