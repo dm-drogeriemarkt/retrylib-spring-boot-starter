@@ -52,12 +52,7 @@ Implement the `retryType()` method returning a unique retry type string that is 
 
 | Property name  | Description |
 | ----------- | ----------- |
-| retrylib.health.queueErrorThreshold | The amount of unprocessed retry messages that can be in the map before the health status will be DOWN. Default: `9` |
-| retrylib.health.queueWarnThreshold | The amount of unprocessed retry messages that can be in the map before the health status will be WARN. Default: `0` |
-| retrylib.persistence.averageValueSize | The average value size of the serialized payload in bytes. This property is used by ChronicleMap to allocate memory and size the persistence file accordingly. Default: `600` |
-| retrylib.persistence.fileName | The name of the file containing the retry entries. Default: `retryChronicleMap.dat` |
-| retrylib.persistence.filePath | The path to the file containing the retry entries. Default: Value of `java.io.tmpdir` env variable |
-| retrylib.persistence.maxEntries | The maximum entries that can be saved in persistence. If this value is exceeded an Exception will be thrown and no further retry entries will be added to the map. Default: `100000` |
+| retrylib.queueLimit | The maximum number of entries to be put into the retry queue. This property is used to initialize the in-memory retry queue. If this value is exceeded an Exception will be thrown and no further retry entries will be added to the queue. Default: `100000` |
 
 ## License
 
