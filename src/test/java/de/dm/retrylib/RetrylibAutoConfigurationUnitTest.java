@@ -3,11 +3,9 @@ package de.dm.retrylib;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -39,9 +37,6 @@ public class RetrylibAutoConfigurationUnitTest {
     public void createNoOpRetryHandlerBeanSuccessfully() {
         RetryHandler noOpRetryHandler = retrylibAutoConfiguration.noOpRetryHandler();
         assertThat(noOpRetryHandler, notNullValue());
-
-        String retryType = noOpRetryHandler.retryType();
-        assertThat(StringUtils.isEmpty(retryType), is(true));
     }
 
     @Test
