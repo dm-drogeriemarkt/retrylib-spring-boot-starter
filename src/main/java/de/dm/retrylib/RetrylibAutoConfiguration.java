@@ -1,6 +1,5 @@
 package de.dm.retrylib;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -15,13 +14,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 @EnableConfigurationProperties(RetrylibProperties.class)
 public class RetrylibAutoConfiguration {
 
-    @Autowired
-    private RetrylibProperties retrylibProperties;
-
     @ConditionalOnMissingBean(RetryService.class)
     @Bean
-    public RetryService retryService() {
-        LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>(5);
+    public RetryService retryService(RetrylibProperties retrylibProperties) {
+        LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>(retrylibProperties.getQueueLimit());
         return new RetryService(retryEntities);
     }
 

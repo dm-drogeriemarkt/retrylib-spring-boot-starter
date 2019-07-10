@@ -11,16 +11,18 @@ import static org.mockito.Mockito.mock;
 
 public class RetrylibAutoConfigurationUnitTest {
 
+    private RetrylibProperties retrylibProperties;
     private RetrylibAutoConfiguration retrylibAutoConfiguration;
 
     @Before
     public void setUp() {
+        retrylibProperties = new RetrylibProperties();
         retrylibAutoConfiguration = new RetrylibAutoConfiguration();
     }
 
     @Test
     public void createRetryServiceBeanSuccessfully() {
-        RetryService retryService = retrylibAutoConfiguration.retryService();
+        RetryService retryService = retrylibAutoConfiguration.retryService(retrylibProperties);
         assertThat(retryService, notNullValue());
     }
 
