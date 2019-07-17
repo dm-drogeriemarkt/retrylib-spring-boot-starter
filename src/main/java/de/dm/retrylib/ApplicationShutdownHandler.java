@@ -19,13 +19,13 @@ class ApplicationShutdownHandler {
     }
 
     @PreDestroy
-    public void onExit() throws InterruptedException {
+    public void onExit() {
         LOG.info("Checking retry queue for shutdown.");
 
         if (!retryEntities.isEmpty()) {
             List<RetryEntity> remainingEntries = new ArrayList<>();
             int remainingEntriesCount = retryEntities.drainTo(remainingEntries);
-            LOG.info("{} retry entries remained during application shutdown: {}", remainingEntriesCount, remainingEntries.toString());
+            LOG.warn("{} retry entries remained during application shutdown: {}", remainingEntriesCount, remainingEntries.toString());
         } else {
             LOG.info("Retry queue is empty, shutting down.");
         }
