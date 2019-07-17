@@ -25,10 +25,10 @@ class ApplicationShutdownHandler {
 
         if (!retryEntities.isEmpty() && LOG.isErrorEnabled()) {
             LOG.error("{} retryEntities remained during application shutdown.", retryEntities.size());
-
-            long counter = 0L;
+            int totalCount = retryEntities.size();
+            int currentIndex = 1;
             for (RetryEntity retryEntity : retryEntities) {
-                LOG.error("RetryEntity {}: {}", counter++, retryEntitySerializer.serialize(retryEntity));
+                LOG.error("RetryEntity {} of {}: {}", currentIndex++, totalCount, retryEntitySerializer.serialize(retryEntity));
             }
         } else {
             LOG.info("Retry queue is empty, shutting down.");

@@ -12,7 +12,7 @@ class RetryProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RetryProcessor.class);
 
-    private static final Integer BATCH_SIZE = 200;
+    private static final Integer BATCH_SIZE = 1000;
 
     private final RetryService retryService;
 
@@ -29,15 +29,22 @@ class RetryProcessor {
     @Scheduled(fixedRateString = "${retrylib.retryIntervalInMillis:" + RetrylibProperties.DEFAULT_RETRY_INTERVAL_IN_MILLIS + "}")
     void processNextRetryBatch() {
         LOG.debug("Scheduling the next batch of {} retryEntities...", BATCH_SIZE);
-        List<RetryEntity> retryBatch = retryService.loadNextRetryEntities(BATCH_SIZE);
-        retryBatch.forEach(this::processRetryEntity);
+        List<RetryEntity> retryEntities = retryService.loadNextRetryEntities(BATCH_SIZE);
+        int totalCount = retryEntities.size();
+        int currentIndex = 1;
+        LOG.info("Processing {} retryEntities...", totalCount);
+
+        for (RetryEntity retryEntity : retryEntities) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Processing retryEntity {} of {}: {}", currentIndex++, totalCount, retryEntitySerializer.serialize(retryEntity));
+            }
+        }
+
+        retryEntities.forEach(this::processRetryEntity);
     }
 
     @SuppressWarnings("unchecked")
     private void processRetryEntity(RetryEntity retryEntity) {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Processing retryEntity {}", retryEntitySerializer.serialize(retryEntity));
-        }
         RetryHandler retryHandler = getRetryHandlerForType(retryEntity.getRetryType());
         retryHandler.handleWithRetry(retryEntity.getPayload());
     }
