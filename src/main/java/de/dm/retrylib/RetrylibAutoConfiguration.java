@@ -1,6 +1,8 @@
 package de.dm.retrylib;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -46,4 +48,8 @@ class RetrylibAutoConfiguration {
         return new RetryAspect(retryService);
     }
 
+    @Bean
+    ApplicationShutdownHandler applicationShutdownHandler(LinkedBlockingQueue<RetryEntity> retryEntities) {
+        return new ApplicationShutdownHandler(retryEntities);
+    }
 }
