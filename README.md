@@ -2,11 +2,9 @@
 
 [![Build Status](https://travis-ci.org/dm-drogeriemarkt/retrylib-spring-boot-starter.svg?branch=master)](https://travis-ci.org/dm-drogeriemarkt/retrylib-spring-boot-starter)
 
-dm retrylib offers a Java-based retry mechanism with persistence needed for all situations where calls to external services can fail and should be retried periodically until they proceed successfully. 
+dm retrylib offers a Java-based in-memory retry mechanism needed for all situations where calls to external services can fail and should be retried periodically until they proceed successfully. 
 
-It uses [ChronicleMap](https://github.com/OpenHFT/Chronicle-Map) under the hood which offers lightweight file-based persistence without the need of a dedicated database server.
-
-The lib is currently targeted for Spring-Boot-1.x-based projects and exposes its functionality as a Spring Boot starter to offer easy integration in existing projects. 
+The lib is currently targeted for Spring-Boot-2.x-based projects and exposes its functionality as a Spring Boot starter to offer easy integration in existing projects. 
 
 ## Usage 
 
@@ -18,7 +16,7 @@ First, include the dm retrylib Spring Boot Starter dependency in your pom.xml:
         <dependency>
             <groupId>de.dm.retrylib</groupId>
             <artifactId>retrylib-spring-boot-starter</artifactId>
-            <version>1.0.1</version>
+            <version>2.0.0</version>
          </dependency>
     </dependencies>
 </project>
@@ -35,18 +33,13 @@ public class ExternalServiceRetryHandler implements RetryHandler<PayloadDto> {
         externalService.call(payload);
     }
 
-    @Override
-    public String retryType() {
-        return "externalServiceRetryType";   
-    }
 }
 ```
 
 To use the dm retrylib, simply implement the Java Interface `RetryHandler` and expose it as a Spring bean, e. g. with `@Component`. As generic type you specify the payload class holding all the relevant data needed for the retry. 
 
 Implement the `handleWithRetry()` method with the actual call to your external service taking the given payload needed for the method invocation. This method will be reinvoked if an exception occurs while calling the external service.
-
-Implement the `retryType()` method returning a unique retry type string that is used by dm retrylib to find the correct RetryHandler implementation for a specific retry entry.  
+  
 
 ## Configuration properties
 
