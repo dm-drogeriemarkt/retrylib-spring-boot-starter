@@ -26,6 +26,7 @@ public class RetryProcessorUnitTest {
         public void handleWithRetry(String payload) {
         }
     };
+    private RetryEntitySerializer retryEntitySerializer = mock(RetryEntitySerializer.class);
 
     @Before
     public void setUp() {
@@ -33,7 +34,7 @@ public class RetryProcessorUnitTest {
 
         retryHandlers = new ArrayList<>();
         retryHandlers.add(validRetryHandler);
-        retryProcessor = new RetryProcessor(retryService, retryHandlers);
+        retryProcessor = new RetryProcessor(retryService, retryHandlers, retryEntitySerializer);
     }
 
     @Test(expected = IllegalArgumentException.class)

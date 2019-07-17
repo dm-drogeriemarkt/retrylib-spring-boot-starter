@@ -15,7 +15,7 @@ class RetryEntitySerializer {
         try {
             return objectMapper.writeValueAsString(retryEntity);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Could not serialize " + retryEntity + " to JSON.");
+            throw new IllegalArgumentException("Could not serialize " + retryEntity + " to JSON.", e);
         }
     }
 

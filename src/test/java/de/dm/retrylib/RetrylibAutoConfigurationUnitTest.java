@@ -12,24 +12,22 @@ import static org.mockito.Mockito.mock;
 
 public class RetrylibAutoConfigurationUnitTest {
 
-    private RetrylibProperties retrylibProperties;
     private RetrylibAutoConfiguration retrylibAutoConfiguration;
 
     @Before
     public void setUp() {
-        retrylibProperties = new RetrylibProperties();
         retrylibAutoConfiguration = new RetrylibAutoConfiguration();
     }
 
     @Test
     public void createRetryServiceBeanSuccessfully() {
-        RetryService retryService = retrylibAutoConfiguration.retryService(new LinkedBlockingQueue<>());
+        RetryService retryService = retrylibAutoConfiguration.retryService(new LinkedBlockingQueue<>(), mock(RetryEntitySerializer.class));
         assertThat(retryService, notNullValue());
     }
 
     @Test
     public void createRetryProcessorBeanSuccessfully() {
-        RetryProcessor retryProcessor = retrylibAutoConfiguration.retryProcessor(mock(RetryService.class), Collections.emptyList());
+        RetryProcessor retryProcessor = retrylibAutoConfiguration.retryProcessor(mock(RetryService.class), Collections.emptyList(), mock(RetryEntitySerializer.class));
         assertThat(retryProcessor, notNullValue());
     }
 

@@ -14,8 +14,11 @@ class RetryService {
 
     private final LinkedBlockingQueue<RetryEntity> retryEntities;
 
-    RetryService(LinkedBlockingQueue<RetryEntity> retryEntities) {
+    private final RetryEntitySerializer retryEntitySerializer;
+
+    RetryService(LinkedBlockingQueue<RetryEntity> retryEntities, RetryEntitySerializer retryEntitySerializer) {
         this.retryEntities = retryEntities;
+        this.retryEntitySerializer = retryEntitySerializer;
     }
 
     synchronized void queueForRetry(Class retryType, Object payload) {
@@ -23,7 +26,9 @@ class RetryService {
         RetryEntity retryEntity = new RetryEntity(key, retryType, payload);
 
         retryEntities.add(retryEntity);
-        LOG.info("Queued for retry: {}", retryEntity);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Queued for retry: {}", retryEntitySerializer.serialize(retryEntity));
+        }
     }
 
     List<RetryEntity> loadNextRetryEntities(Integer batchSize) {

@@ -10,10 +10,13 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class RetryServiceUnitTest {
 
     private RetryService retryService;
+
+    private RetryEntitySerializer retryEntitySerializer = mock(RetryEntitySerializer.class);
 
     private RetryHandler<String> demoRetryHandler = new RetryHandler<String>() {
         @Override
@@ -25,13 +28,13 @@ public class RetryServiceUnitTest {
     @Before
     public void setUp() {
         retryEntities = new LinkedBlockingQueue<>(5);
-        retryService = new RetryService(retryEntities);
+        retryService = new RetryService(retryEntities, retryEntitySerializer);
     }
 
     @Test(expected = IllegalStateException.class)
     public void queueForRetryThrowsIllegalStateExceptionOnLimitReached() {
         LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>(1);
-        retryService = new RetryService(retryEntities);
+        retryService = new RetryService(retryEntities, retryEntitySerializer);
 
         retryService.queueForRetry(demoRetryHandler.getClass(), "payload1");
         retryService.queueForRetry(demoRetryHandler.getClass(), "payload2");

@@ -18,9 +18,12 @@ class RetryProcessor {
 
     private final List<RetryHandler> retryHandlers;
 
-    RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers) {
+    private final RetryEntitySerializer retryEntitySerializer;
+
+    RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, RetryEntitySerializer retryEntitySerializer) {
         this.retryService = retryService;
         this.retryHandlers = Collections.unmodifiableList(retryHandlers);
+        this.retryEntitySerializer = retryEntitySerializer;
     }
 
     @Scheduled(fixedRateString = "${retrylib.retryIntervalInMillis:" + RetrylibProperties.DEFAULT_RETRY_INTERVAL_IN_MILLIS + "}")
@@ -32,7 +35,9 @@ class RetryProcessor {
 
     @SuppressWarnings("unchecked")
     private void processRetryEntity(RetryEntity retryEntity) {
-        LOG.info("Processing retryEntity {}", retryEntity);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Processing retryEntity {}", retryEntitySerializer.serialize(retryEntity));
+        }
         RetryHandler retryHandler = getRetryHandlerForType(retryEntity.getRetryType());
         retryHandler.handleWithRetry(retryEntity.getPayload());
     }

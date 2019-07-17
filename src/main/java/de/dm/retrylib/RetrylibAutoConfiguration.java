@@ -18,8 +18,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 class RetrylibAutoConfiguration {
 
     @Bean
-    RetryService retryService(LinkedBlockingQueue<RetryEntity> retryEntities) {
-        return new RetryService(retryEntities);
+    RetryService retryService(LinkedBlockingQueue<RetryEntity> retryEntities, RetryEntitySerializer retryEntitySerializer) {
+        return new RetryService(retryEntities, retryEntitySerializer);
     }
 
     @Bean
@@ -30,8 +30,8 @@ class RetrylibAutoConfiguration {
     }
 
     @Bean
-    RetryProcessor retryProcessor(RetryService retryService, List<RetryHandler> retryHandlers) {
-        return new RetryProcessor(retryService, retryHandlers);
+    RetryProcessor retryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, RetryEntitySerializer retryEntitySerializer) {
+        return new RetryProcessor(retryService, retryHandlers, retryEntitySerializer);
     }
 
     @ConditionalOnMissingBean(RetryHandler.class)
