@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 class ApplicationShutdownHandler {
@@ -14,18 +12,24 @@ class ApplicationShutdownHandler {
 
     private final LinkedBlockingQueue<RetryEntity> retryEntities;
 
-    ApplicationShutdownHandler(LinkedBlockingQueue<RetryEntity> retryEntities) {
+    private final RetryEntitySerializer retryEntitySerializer;
+
+    ApplicationShutdownHandler(LinkedBlockingQueue<RetryEntity> retryEntities, RetryEntitySerializer retryEntitySerializer) {
         this.retryEntities = retryEntities;
+        this.retryEntitySerializer = retryEntitySerializer;
     }
 
     @PreDestroy
-    public void onExit() {
+    void onExit() {
         LOG.info("Checking retry queue for shutdown.");
 
-        if (!retryEntities.isEmpty()) {
-            List<RetryEntity> remainingEntries = new ArrayList<>();
-            int remainingEntriesCount = retryEntities.drainTo(remainingEntries);
-            LOG.warn("{} retry entries remained during application shutdown: {}", remainingEntriesCount, remainingEntries.toString());
+        if (!retryEntities.isEmpty() && LOG.isErrorEnabled()) {
+            LOG.error("{} retryEntities remained during application shutdown.", retryEntities.size());
+
+            long counter = 0L;
+            for (RetryEntity retryEntity : retryEntities) {
+                LOG.error("RetryEntity {}: {}", counter++, retryEntitySerializer.serialize(retryEntity));
+            }
         } else {
             LOG.info("Retry queue is empty, shutting down.");
         }

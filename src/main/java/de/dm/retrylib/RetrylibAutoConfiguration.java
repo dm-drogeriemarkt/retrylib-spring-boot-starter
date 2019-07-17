@@ -1,8 +1,7 @@
 package de.dm.retrylib;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.MeterRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +48,12 @@ class RetrylibAutoConfiguration {
     }
 
     @Bean
-    ApplicationShutdownHandler applicationShutdownHandler(LinkedBlockingQueue<RetryEntity> retryEntities) {
-        return new ApplicationShutdownHandler(retryEntities);
+    RetryEntitySerializer retryEntitySerializer(ObjectMapper objectMapper) {
+        return new RetryEntitySerializer(objectMapper);
+    }
+
+    @Bean
+    ApplicationShutdownHandler applicationShutdownHandler(LinkedBlockingQueue<RetryEntity> retryEntities, RetryEntitySerializer retryEntitySerializer) {
+        return new ApplicationShutdownHandler(retryEntities, retryEntitySerializer);
     }
 }

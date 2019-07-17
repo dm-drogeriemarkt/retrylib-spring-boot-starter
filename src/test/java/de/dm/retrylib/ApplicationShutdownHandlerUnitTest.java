@@ -1,42 +1,37 @@
 package de.dm.retrylib;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class ApplicationShutdownHandlerUnitTest {
 
-    private ApplicationShutdownHandler applicationShutdownHandler;
-    private LinkedBlockingQueue<RetryEntity> retryEntities = mock(LinkedBlockingQueue.class);
-
-    @Before
-    public void setUp() throws Exception {
-        applicationShutdownHandler = new ApplicationShutdownHandler(retryEntities);
-
-    }
+    private final LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>();
+    private final RetryEntitySerializer retryEntitySerializer = mock(RetryEntitySerializer.class);
+    private final ApplicationShutdownHandler applicationShutdownHandler = new ApplicationShutdownHandler(retryEntities, retryEntitySerializer);
 
     @Test
-    public void onExitDrainsRemainingRetryEntities() throws InterruptedException {
-        when(retryEntities.isEmpty()).thenReturn(false);
+    public void onExitLogsRemainingRetryEntities() {
+        RetryEntity retryEntity1 = new RetryEntity("key1", ExternalServiceRetryHandler.class, "payload1");
+        RetryEntity retryEntity2 = new RetryEntity("key2", ExternalServiceRetryHandler.class, "payload2");
+        retryEntities.add(retryEntity1);
+        retryEntities.add(retryEntity2);
 
         applicationShutdownHandler.onExit();
 
-        verify(retryEntities).drainTo(anyList());
+        verify(retryEntitySerializer).serialize(retryEntity1);
+        verify(retryEntitySerializer).serialize(retryEntity2);
     }
 
     @Test
-    public void onExitSkipsDrainingOfEmptyRetryList() throws InterruptedException {
-        when(retryEntities.isEmpty()).thenReturn(true);
-
+    public void onExitSkipsLoggingIfNoRetryEntitiesArePending() throws InterruptedException {
         applicationShutdownHandler.onExit();
 
-        verify(retryEntities, times(0)).drainTo(anyList());
+        verify(retryEntitySerializer, never()).serialize(any(RetryEntity.class));
     }
 }
