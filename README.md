@@ -53,10 +53,12 @@ Implement the `retryType()` method returning a unique retry type string that is 
 | Property name  | Description |
 | ----------- | ----------- |
 | retrylib.queueLimit | The maximum number of entries to be put into the retry queue. This property is used to initialize the in-memory retry queue. If this value is exceeded an Exception will be thrown and no further retry entries will be added to the queue. Default: `100000` |
+| retrylib.retryIntervalInMillis | The interval in milliseconds that is used to process a retry batch. Default: 60000 (=1 minute) |
+
 
 ## License
 
-Copyright (c) 2018 dm-drogerie markt GmbH + Co. KG, https://dm.de
+Copyright (c) 2018-2019 dmTECH GmbH, https://www.dmtech.de
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

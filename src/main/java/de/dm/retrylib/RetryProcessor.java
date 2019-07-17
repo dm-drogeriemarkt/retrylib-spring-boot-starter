@@ -22,16 +22,16 @@ class RetryProcessor {
         this.retryHandlers = Collections.unmodifiableList(retryHandlers);
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRateString = "${retrylib.retryIntervalInMillis:" + RetrylibProperties.DEFAULT_RETRY_INTERVAL_IN_MILLIS + "}")
     void processNextRetryBatch() {
-        LOG.info("Scheduling the next batch of {} retry entries...", BATCH_SIZE);
+        LOG.debug("Scheduling the next batch of {} retryEntities...", BATCH_SIZE);
         List<RetryEntity> retryBatch = retryService.loadNextRetryEntities(BATCH_SIZE);
         retryBatch.forEach(this::processRetryEntity);
     }
 
     @SuppressWarnings("unchecked")
     private void processRetryEntity(RetryEntity retryEntity) {
-        LOG.info("Processing retry entry {}", retryEntity);
+        LOG.info("Processing retryEntity {}", retryEntity);
         RetryHandler retryHandler = getRetryHandlerForType(retryEntity.getRetryType());
         retryHandler.handleWithRetry(retryEntity.getPayload());
     }
