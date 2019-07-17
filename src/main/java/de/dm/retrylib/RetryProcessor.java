@@ -3,6 +3,7 @@ package de.dm.retrylib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.ClassUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,7 @@ class RetryProcessor {
     private RetryHandler<?> getRetryHandlerForType(Class retryType) {
         return retryHandlers
                 .stream()
-                .filter(it -> retryType.equals(it.getClass()))
+                .filter(it -> retryType.equals(ClassUtils.getUserClass(it.getClass())))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No retryHandler found for type " + retryType));
     }
