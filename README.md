@@ -4,7 +4,9 @@
 
 dm retrylib offers a Java-based in-memory retry mechanism needed for all situations where calls to external services can fail and should be retried periodically until they proceed successfully. 
 
-The lib is currently targeted for Spring-Boot-2.x-based projects and exposes its functionality as a Spring Boot starter to offer easy integration in existing projects. 
+If the JVM is terminated while there were still some invocations to retry, these will be logged with their JSON representation.
+
+The lib is currently targeted for Spring-Boot-2.x-based projects with a minimum Java 8 baseline and exposes its functionality as a Spring Boot starter to offer easy integration into existing projects. 
 
 ## Usage 
 
@@ -38,7 +40,7 @@ public class ExternalServiceRetryHandler implements RetryHandler<PayloadDto> {
 
 To use the dm retrylib, simply implement the Java Interface `RetryHandler` and expose it as a Spring bean, e. g. with `@Component`. As generic type you specify the payload class holding all the relevant data needed for the retry. 
 
-Implement the `handleWithRetry()` method with the actual call to your external service taking the given payload needed for the method invocation. This method will be reinvoked if an exception occurs while calling the external service.
+Implement the `handleWithRetry()` method with the actual call to your external service taking the given payload needed for the method invocation. This method will be reinvoked if an exception occurs while calling the external service. Make sure the payload can be converted to JSON by the Jackson library (e. g. has public getters).
   
 
 ## Configuration properties
@@ -46,8 +48,15 @@ Implement the `handleWithRetry()` method with the actual call to your external s
 | Property name  | Description |
 | ----------- | ----------- |
 | retrylib.queueLimit | The maximum number of entries to be put into the retry queue. This property is used to initialize the in-memory retry queue. If this value is exceeded an Exception will be thrown and no further retry entries will be added to the queue. Default: `100000` |
-| retrylib.retryIntervalInMillis | The interval in milliseconds that is used to process a retry batch. Default: 60000 (=1 minute) |
+| retrylib.retryIntervalInMillis | The interval in milliseconds that is used to process a retry batch. Default: `60000` (=1 minute) |
 
+
+## Metrics / Alerting hints
+
+The dm retrylib exposes the current amount of invocations to be retried as a Micrometer gauge named `retrylib.entitiesToRetry`. This metric can be used for creating an alert if the value doesn't fall to zero after some time. 
+
+If during the shutdown of the JVM there are still some invocations to retry, they will be logged as a last resort with their payload in JSON format. You can create an alert for the log message pattern `# retryEntities remained during application shutdown.`.
+Every single invocation is then logged as JSON an can be manually / programmatically processed afterwards.
 
 ## License
 

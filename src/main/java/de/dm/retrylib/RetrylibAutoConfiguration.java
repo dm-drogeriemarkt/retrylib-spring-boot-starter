@@ -25,7 +25,7 @@ class RetrylibAutoConfiguration {
     @Bean
     LinkedBlockingQueue<RetryEntity> retryEntities(MeterRegistry meterRegistry, RetrylibProperties retrylibProperties) {
         LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>(retrylibProperties.getQueueLimit());
-        meterRegistry.gauge("retrylib.entriesToRetry", Collections.emptyList(), retryEntities, LinkedBlockingQueue::size);
+        meterRegistry.gauge("retrylib.entitiesToRetry", Collections.emptyList(), retryEntities, LinkedBlockingQueue::size);
         return retryEntities;
     }
 
