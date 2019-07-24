@@ -144,6 +144,7 @@
                     **/*Entity.*,**/*Mock.*,**/*Exception.*,**/*Properties.*,**/*Configuration.*,**/domain/**,**/test/**
                 </sonar.coverage.exclusions>
                 <sonar.test.exclusions>src/test</sonar.test.exclusions>
+                <sonar.exclusions>src/test</sonar.exclusions>
             </properties>
         </profile>
         <profile>
