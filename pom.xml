@@ -130,6 +130,21 @@
                 </plugins>
             </build>
         </profile>
+        <!-- https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+Maven -->
+        <!-- Properties file no longer supported: https://stackoverflow.com/questions/45095379/running-sonar-analysis-with-mvn-sonarsonar-ignores-sonar-project-properties -->
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.projectKey>retrylib</sonar.projectKey>
+                <sonar.sources>src/main/java</sonar.sources>
+                <sonar.jacoco.reportPaths>target/jacoco.exec</sonar.jacoco.reportPaths>
+                <sonar.javascript.lcov.reportPath>target/lcov.info</sonar.javascript.lcov.reportPath>
+                <sonar.java.binaries>target/classes</sonar.java.binaries>
+                <sonar.coverage.exclusions>
+                    **/*Entity.*,**/*Mock.*,**/*Exception.*,**/*Properties.*,**/*Configuration.*,**/domain/**,**/test/**
+                </sonar.coverage.exclusions>
+            </properties>
+        </profile>
         <profile>
             <id>sign</id>
             <build>
