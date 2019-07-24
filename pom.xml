@@ -135,7 +135,7 @@
         <profile>
             <id>sonar</id>
             <properties>
-                <sonar.projectKey>retrylib</sonar.projectKey>
+                <sonar.projectKey>dm-drogeriemarkt_retrylib-spring-boot-starter</sonar.projectKey>
                 <sonar.sources>src/main/java</sonar.sources>
                 <sonar.jacoco.reportPaths>target/jacoco.exec</sonar.jacoco.reportPaths>
                 <sonar.javascript.lcov.reportPath>target/lcov.info</sonar.javascript.lcov.reportPath>
@@ -143,6 +143,7 @@
                 <sonar.coverage.exclusions>
                     **/*Entity.*,**/*Mock.*,**/*Exception.*,**/*Properties.*,**/*Configuration.*,**/domain/**,**/test/**
                 </sonar.coverage.exclusions>
+                <sonar.test.exclusions>src/test</sonar.test.exclusions>
             </properties>
         </profile>
         <profile>
