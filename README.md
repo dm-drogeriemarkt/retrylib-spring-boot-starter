@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/dm-drogeriemarkt/retrylib-spring-boot-starter.svg?branch=master)](https://travis-ci.org/dm-drogeriemarkt/retrylib-spring-boot-starter)
 
-dm retrylib offers a Java-based retry mechanism with persistence needed for all situations where calls to external services can fail and should be retried periodically until they proceed successfully. 
+dm retrylib offers a Java-based in-memory retry mechanism needed for all situations where calls to external services can fail and should be retried periodically until they proceed successfully. 
 
-It uses [ChronicleMap](https://github.com/OpenHFT/Chronicle-Map) under the hood which offers lightweight file-based persistence without the need of a dedicated database server.
+If the JVM is terminated while there were still some invocations to retry, these will be logged with their JSON representation.
 
-The lib is currently targeted for Spring-Boot-1.x-based projects and exposes its functionality as a Spring Boot starter to offer easy integration in existing projects. 
+The lib is currently targeted for Spring-Boot-2.x-based projects with a minimum Java 8 baseline and exposes its functionality as a Spring Boot starter to offer easy integration into existing projects. 
 
 ## Usage 
 
@@ -18,7 +18,7 @@ First, include the dm retrylib Spring Boot Starter dependency in your pom.xml:
         <dependency>
             <groupId>de.dm.retrylib</groupId>
             <artifactId>retrylib-spring-boot-starter</artifactId>
-            <version>1.0.1</version>
+            <version>2.0.0</version>
          </dependency>
     </dependencies>
 </project>
@@ -35,33 +35,32 @@ public class ExternalServiceRetryHandler implements RetryHandler<PayloadDto> {
         externalService.call(payload);
     }
 
-    @Override
-    public String retryType() {
-        return "externalServiceRetryType";   
-    }
 }
 ```
 
 To use the dm retrylib, simply implement the Java Interface `RetryHandler` and expose it as a Spring bean, e. g. with `@Component`. As generic type you specify the payload class holding all the relevant data needed for the retry. 
 
-Implement the `handleWithRetry()` method with the actual call to your external service taking the given payload needed for the method invocation. This method will be reinvoked if an exception occurs while calling the external service.
-
-Implement the `retryType()` method returning a unique retry type string that is used by dm retrylib to find the correct RetryHandler implementation for a specific retry entry.  
+Implement the `handleWithRetry()` method with the actual call to your external service taking the given payload needed for the method invocation. This method will be reinvoked if an exception occurs while calling the external service. Make sure the payload can be converted to JSON by the Jackson library (e. g. has public getters).
+  
 
 ## Configuration properties
 
 | Property name  | Description |
 | ----------- | ----------- |
-| retrylib.health.queueErrorThreshold | The amount of unprocessed retry messages that can be in the map before the health status will be DOWN. Default: `9` |
-| retrylib.health.queueWarnThreshold | The amount of unprocessed retry messages that can be in the map before the health status will be WARN. Default: `0` |
-| retrylib.persistence.averageValueSize | The average value size of the serialized payload in bytes. This property is used by ChronicleMap to allocate memory and size the persistence file accordingly. Default: `600` |
-| retrylib.persistence.fileName | The name of the file containing the retry entries. Default: `retryChronicleMap.dat` |
-| retrylib.persistence.filePath | The path to the file containing the retry entries. Default: Value of `java.io.tmpdir` env variable |
-| retrylib.persistence.maxEntries | The maximum entries that can be saved in persistence. If this value is exceeded an Exception will be thrown and no further retry entries will be added to the map. Default: `100000` |
+| retrylib.queueLimit | The maximum number of entries to be put into the retry queue. This property is used to initialize the in-memory retry queue. If this value is exceeded an Exception will be thrown and no further retry entries will be added to the queue. Default: `100000` |
+| retrylib.retryIntervalInMillis | The interval in milliseconds that is used to process a retry batch. Default: `60000` (=1 minute) |
+
+
+## Metrics / Alerting hints
+
+The dm retrylib exposes the current amount of invocations to be retried as a Micrometer gauge named `retrylib.entitiesToRetry`. This metric can be used for creating an alert if the value doesn't fall to zero after some time. 
+
+If during the shutdown of the JVM there are still some invocations to retry, they will be logged as a last resort with their payload in JSON format. You can create an alert for the log message pattern `# retryEntities remained during application shutdown.`.
+Every single invocation is then logged as JSON an can be manually / programmatically processed afterwards.
 
 ## License
 
-Copyright (c) 2018 dm-drogerie markt GmbH + Co. KG, https://dm.de
+Copyright (c) 2018-2019 dmTECH GmbH, https://www.dmtech.de
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

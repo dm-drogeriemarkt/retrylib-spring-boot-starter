@@ -8,24 +8,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Aspect
-public class RetryAspect {
+class RetryAspect {
 
     private static final Logger LOG = LoggerFactory.getLogger(RetryAspect.class);
 
     private final RetryService retryService;
 
-    public RetryAspect(RetryService retryService) {
+    RetryAspect(RetryService retryService) {
         this.retryService = retryService;
     }
 
     @Pointcut("execution(* *..RetryHandler+.handleWithRetry(..)))")
-    public void retryableMethods() {
+    void retryableMethods() {
         // empty method for joinpoint definition
     }
 
     @Around(value = "retryableMethods()",
             argNames = "joinPoint")
-    public Object runWithRetry(ProceedingJoinPoint joinPoint) throws Error { //NOSONAR Always propagate Errors further
+    Object runWithRetry(ProceedingJoinPoint joinPoint) throws Error { //NOSONAR Always propagate Errors further
         try {
             return joinPoint.proceed();
         } catch (Error error) { //NOSONAR we have to catch Errors here because they must pe propagated further
@@ -43,8 +43,8 @@ public class RetryAspect {
         Object[] invocationArguments = joinPoint.getArgs();
         Object payload = invocationArguments[0];
         RetryHandler retryHandler = (RetryHandler) joinPoint.getTarget();
-        LOG.error("An exception occurred when processing retryable method. Scheduling call for retry.", payload, throwable);
-        retryService.queueForRetry(retryHandler.retryType(), payload);
+        LOG.error("An exception occurred when processing retryable method. Scheduling call for retry.", throwable);
+        retryService.queueForRetry(retryHandler.getClass(), payload);
     }
 
 }

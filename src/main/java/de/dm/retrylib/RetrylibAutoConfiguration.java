@@ -1,73 +1,59 @@
 package de.dm.retrylib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.openhft.chronicle.map.ChronicleMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Configuration
 @EnableScheduling
 @EnableConfigurationProperties(RetrylibProperties.class)
-public class RetrylibAutoConfiguration {
+class RetrylibAutoConfiguration {
 
-    @Autowired
-    private RetrylibProperties retrylibProperties;
-
-    @ConditionalOnMissingBean(RetryService.class)
     @Bean
-    public RetryService retryService(ObjectMapper objectMapper, @Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap) {
-        return new RetryService(objectMapper, retryMap, retrylibProperties);
+    RetryService retryService(LinkedBlockingQueue<RetryEntity> retryEntities, RetryEntitySerializer retryEntitySerializer) {
+        return new RetryService(retryEntities, retryEntitySerializer);
     }
 
-    @ConditionalOnMissingBean(RetryProcessor.class)
     @Bean
-    public RetryProcessor retryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, ObjectMapper objectMapper) {
-        return new RetryProcessor(retryService, retryHandlers, objectMapper);
+    LinkedBlockingQueue<RetryEntity> retryEntities(MeterRegistry meterRegistry, RetrylibProperties retrylibProperties) {
+        LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>(retrylibProperties.getQueueLimit());
+        meterRegistry.gauge("retrylib.entitiesToRetry", Collections.emptyList(), retryEntities, LinkedBlockingQueue::size);
+        return retryEntities;
+    }
+
+    @Bean
+    RetryProcessor retryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, RetryEntitySerializer retryEntitySerializer) {
+        return new RetryProcessor(retryService, retryHandlers, retryEntitySerializer);
     }
 
     @ConditionalOnMissingBean(RetryHandler.class)
     @Bean
-    public RetryHandler noOpRetryHandler() {
-        return new RetryHandler() {
-            @Override
-            public void handleWithRetry(Object payload) {
-                // Noop implementation
-            }
-
-            @Override
-            public String retryType() {
-                return "";
-            }
+    RetryHandler noOpRetryHandler() {
+        return payload -> {
+            // Noop implementation
         };
     }
 
-    @ConditionalOnMissingBean(RetryAspect.class)
     @Bean
-    public RetryAspect retryAspect(RetryService retryService) {
+    RetryAspect retryAspect(RetryService retryService) {
         return new RetryAspect(retryService);
     }
 
     @Bean
-    public RetryMapConfigurer retryMapConfigurer() {
-        return new RetryMapConfigurer(retrylibProperties);
+    RetryEntitySerializer retryEntitySerializer(ObjectMapper objectMapper) {
+        return new RetryEntitySerializer(objectMapper);
     }
 
     @Bean
-    public ChronicleMap<String, RetryEntity> retryMap(RetryMapConfigurer retryMapConfigurer) throws IOException {
-        return retryMapConfigurer.configureChronicleMap();
+    ApplicationShutdownHandler applicationShutdownHandler(LinkedBlockingQueue<RetryEntity> retryEntities, RetryEntitySerializer retryEntitySerializer) {
+        return new ApplicationShutdownHandler(retryEntities, retryEntitySerializer);
     }
-
-    @Bean
-    public RetryMapHealthIndicator retryHandlerHealthIndicator(@Value("#{retryMap}") ChronicleMap<String, RetryEntity> retryMap) {
-        return new RetryMapHealthIndicator(retryMap, retrylibProperties.getHealthProperties().getQueueWarnThreshold(), retrylibProperties.getHealthProperties().getQueueErrorThreshold());
-    }
-
 }

@@ -1,30 +1,36 @@
 package de.dm.retrylib;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 @ConfigurationProperties(prefix = "retrylib")
-public class RetrylibProperties {
+class RetrylibProperties {
 
-    @NestedConfigurationProperty
-    private PersistenceProperties persistence = new PersistenceProperties();
+    static final int DEFAULT_QUEUE_LIMIT = 100000;
+    static final int DEFAULT_RETRY_INTERVAL_IN_MILLIS = 60000;
 
-    public PersistenceProperties getPersistence() {
-        return persistence;
+    /**
+     * The maximum capacity for initialization of the in-memory queue.
+     */
+    private int queueLimit = DEFAULT_QUEUE_LIMIT;
+
+    /**
+     * The interval in milliseconds that is used to process a retry batch.
+     */
+    long retryIntervalInMillis = DEFAULT_RETRY_INTERVAL_IN_MILLIS;
+
+    long getRetryIntervalInMillis() {
+        return retryIntervalInMillis;
     }
 
-    public void setPersistence(PersistenceProperties persistence) {
-        this.persistence = persistence;
+    void setRetryIntervalInMillis(long retryIntervalInMillis) {
+        this.retryIntervalInMillis = retryIntervalInMillis;
     }
 
-    @NestedConfigurationProperty
-    private HealthProperties healthProperties = new HealthProperties();
-
-    public HealthProperties getHealthProperties() {
-        return healthProperties;
+    int getQueueLimit() {
+        return queueLimit;
     }
 
-    public void setHealthProperties(HealthProperties healthProperties) {
-        this.healthProperties = healthProperties;
+    void setQueueLimit(int queueLimit) {
+        this.queueLimit = queueLimit;
     }
 }

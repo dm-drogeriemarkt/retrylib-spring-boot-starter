@@ -1,62 +1,58 @@
 package de.dm.retrylib;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.GenericTypeResolver;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.ClassUtils;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class RetryProcessor {
+class RetryProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RetryProcessor.class);
 
-    private static final Integer BATCH_SIZE = 200;
+    private static final Integer BATCH_SIZE = 1000;
 
     private final RetryService retryService;
 
     private final List<RetryHandler> retryHandlers;
 
-    private final ObjectMapper objectMapper;
+    private final RetryEntitySerializer retryEntitySerializer;
 
-    public RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, ObjectMapper objectMapper) {
+    RetryProcessor(RetryService retryService, List<RetryHandler> retryHandlers, RetryEntitySerializer retryEntitySerializer) {
         this.retryService = retryService;
         this.retryHandlers = Collections.unmodifiableList(retryHandlers);
-        this.objectMapper = objectMapper;
+        this.retryEntitySerializer = retryEntitySerializer;
     }
 
-    @Scheduled(fixedRate = 60000)
-    public void processNextRetryBatch() {
-        LOG.info("Scheduling the next batch of {} retry entries...", BATCH_SIZE);
-        List<RetryEntity> retryBatch = retryService.loadNextRetryEntities(BATCH_SIZE);
-        retryBatch.forEach(this::processRetryEntity);
+    @Scheduled(fixedRateString = "${retrylib.retryIntervalInMillis:" + RetrylibProperties.DEFAULT_RETRY_INTERVAL_IN_MILLIS + "}")
+    void processNextRetryBatch() {
+        LOG.debug("Scheduling the next batch of {} retryEntities...", BATCH_SIZE);
+        List<RetryEntity> retryEntities = retryService.loadNextRetryEntities(BATCH_SIZE);
+        int totalCount = retryEntities.size();
+        int currentIndex = 1;
+        LOG.info("Processing {} retryEntities...", totalCount);
+
+        for (RetryEntity retryEntity : retryEntities) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Processing retryEntity {} of {}: {}", currentIndex++, totalCount, retryEntitySerializer.serialize(retryEntity));
+            }
+        }
+
+        retryEntities.forEach(this::processRetryEntity);
     }
 
     @SuppressWarnings("unchecked")
     private void processRetryEntity(RetryEntity retryEntity) {
-        LOG.info("Processing retry entry {}", retryEntity);
         RetryHandler retryHandler = getRetryHandlerForType(retryEntity.getRetryType());
-        Class<?> payloadType = GenericTypeResolver.resolveTypeArgument(retryHandler.getClass(), RetryHandler.class);
-        Object deserializedPayload = deserialize(payloadType, retryEntity.getPayload());
-        retryService.deleteRetryEntity(retryEntity);
-        retryHandler.handleWithRetry(deserializedPayload);
+        retryHandler.handleWithRetry(retryEntity.getPayload());
     }
 
-    private <T> T deserialize(Class<T> targetClass, String payload) {
-        try {
-            return objectMapper.readValue(payload, targetClass);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Could not deserialize payload: " + payload + " for target " + targetClass, e);
-        }
-    }
-
-    private RetryHandler<?> getRetryHandlerForType(String retryType) {
+    private RetryHandler<?> getRetryHandlerForType(Class retryType) {
         return retryHandlers
                 .stream()
-                .filter(it -> retryType.equals(it.retryType()))
+                .filter(it -> retryType.equals(ClassUtils.getUserClass(it.getClass())))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No retryHandler found for type " + retryType));
     }
