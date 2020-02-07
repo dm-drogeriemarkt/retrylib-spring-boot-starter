@@ -17,7 +17,7 @@ install: mvn install -P !build-extras -DskipTests=true -Dmaven.javadoc.skip=true
 script:
   - mvn test -P !build-extras -B
   # build the project, run tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Psonar-coverage -Psonar
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Psonar-coverage -Psonar -X
 
 cache:
   directories:
