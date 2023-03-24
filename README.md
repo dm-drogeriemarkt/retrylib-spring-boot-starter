@@ -1,7 +1,8 @@
 # dm retrylib
 
 [<img src="https://opensourcelogos.aws.dmtech.cloud/dmTECH_opensource_logo.svg" height="20" width="130">](https://www.dmtech.de/de)
-[![Build Status](https://travis-ci.org/dm-drogeriemarkt/retrylib-spring-boot-starter.svg?branch=master)](https://travis-ci.org/dm-drogeriemarkt/retrylib-spring-boot-starter)
+[![Build Status](https://github.com/dm-drogeriemarkt/retrylib-spring-boot-starter/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/dm-drogeriemarkt/retrylib-spring-boot-starter/actions?query=branch%3Amaster)
+
 
 dm retrylib offers a Java-based in-memory retry mechanism needed for all situations where calls to external services can fail and should be retried periodically until they proceed successfully. 
 
