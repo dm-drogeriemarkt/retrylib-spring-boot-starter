@@ -5,7 +5,7 @@
 
     <groupId>de.dm.retrylib</groupId>
     <artifactId>retrylib-spring-boot-starter</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>${project.version}</version>
     <packaging>jar</packaging>
 
     <name>dm retrylib Spring Boot Starter</name>
@@ -33,12 +33,6 @@
             <name>Patrick Hofmann</name>
             <email>patrick.hofmann@dm.de</email>
         </developer>
-        <developer>
-            <organization>dm-drogerie markt GmbH + Co. KG</organization>
-            <organizationUrl>https://dm.de</organizationUrl>
-            <name>Arnold Franke</name>
-            <email>arnold.franke@dm.de</email>
-        </developer>
     </developers>
 
     <parent>
@@ -49,6 +43,7 @@
     </parent>
 
     <properties>
+        <project.version>2.0.0-SNAPSHOT</project.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <jacoco.version>0.8.3</jacoco.version>
