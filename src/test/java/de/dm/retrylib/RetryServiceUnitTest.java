@@ -1,7 +1,9 @@
 package de.dm.retrylib;
 
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -9,10 +11,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class RetryServiceUnitTest {
+class RetryServiceUnitTest {
 
     private RetryService retryService;
 
@@ -25,24 +27,25 @@ public class RetryServiceUnitTest {
     };
     private LinkedBlockingQueue<RetryEntity> retryEntities;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         retryEntities = new LinkedBlockingQueue<>(5);
         retryService = new RetryService(retryEntities, retryEntitySerializer);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void queueForRetryThrowsIllegalStateExceptionOnLimitReached() {
+    @Test
+    void queueForRetryThrowsIllegalStateExceptionOnLimitReached() {
         LinkedBlockingQueue<RetryEntity> retryEntities = new LinkedBlockingQueue<>(1);
         retryService = new RetryService(retryEntities, retryEntitySerializer);
 
         retryService.queueForRetry(demoRetryHandler.getClass(), "payload1");
-        retryService.queueForRetry(demoRetryHandler.getClass(), "payload2");
+
+        Assertions.assertThrows(IllegalStateException.class, () -> retryService.queueForRetry(demoRetryHandler.getClass(), "payload2"));
     }
 
 
     @Test
-    public void queueForRetryWritesToQueueSuccessfully() throws InterruptedException {
+    void queueForRetryWritesToQueueSuccessfully() throws InterruptedException {
         String payload = "payload";
         retryService.queueForRetry(demoRetryHandler.getClass(), payload);
 
@@ -53,7 +56,7 @@ public class RetryServiceUnitTest {
     }
 
     @Test
-    public void loadNextRetryEntitiesReturnsListOfEntries() {
+    void loadNextRetryEntitiesReturnsListOfEntries() {
         String payload = "payload";
         retryService.queueForRetry(demoRetryHandler.getClass(), payload);
 
@@ -63,7 +66,7 @@ public class RetryServiceUnitTest {
     }
 
     @Test
-    public void loadNextRetryEntitiesReturnsListOfEntriesLimitedByBatchSize() {
+    void loadNextRetryEntitiesReturnsListOfEntriesLimitedByBatchSize() {
         retryService.queueForRetry(demoRetryHandler.getClass(), "payload1");
         retryService.queueForRetry(demoRetryHandler.getClass(), "payload2");
         retryService.queueForRetry(demoRetryHandler.getClass(), "payload3");

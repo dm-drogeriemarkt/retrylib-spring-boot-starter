@@ -1,12 +1,12 @@
 package de.dm.retrylib;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -15,8 +15,8 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @TestPropertySource("classpath:test.properties")
-@RunWith(SpringRunner.class)
-public class RetrylibIntegrationTest {
+@ExtendWith(SpringExtension.class)
+class RetrylibIntegrationTest {
 
     @MockBean
     private ExternalService externalService;
@@ -25,7 +25,7 @@ public class RetrylibIntegrationTest {
     private ExternalServiceRetryHandler externalServiceRetryHandler;
 
     @Test
-    public void processesRetryEntitiesIfCallsToExternalServiceFail() throws Exception {
+    void processesRetryEntitiesIfCallsToExternalServiceFail() throws Exception {
         String firstPayload = "firstPayload";
         String secondPayload = "secondPayload";
         String thirdPayload = "thirdPayload";
