@@ -47,6 +47,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <jacoco.version>0.8.3</jacoco.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
     </properties>
 
@@ -77,6 +78,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- dependency override to fix vulnerability -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
         </dependency>
     </dependencies>
 
