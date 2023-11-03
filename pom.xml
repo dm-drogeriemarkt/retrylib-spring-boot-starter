@@ -5,7 +5,7 @@
 
     <groupId>de.dm.retrylib</groupId>
     <artifactId>retrylib-spring-boot-starter</artifactId>
-    <version>${project.version}</version>
+    <version>3.0.1</version>
     <packaging>jar</packaging>
 
     <name>dm retrylib Spring Boot Starter</name>
@@ -43,7 +43,6 @@
     </parent>
 
     <properties>
-        <project.version>2.0.0-SNAPSHOT</project.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <jacoco.version>0.8.3</jacoco.version>
@@ -119,7 +118,7 @@
                         <artifactId>maven-release-plugin</artifactId>
                         <version>${maven-release-plugin.version}</version>
                         <configuration>
-                            <tag>@{project.version}</tag>
+                            <tag>3.0.1</tag>
                         </configuration>
                     </plugin>
                 </plugins>
