@@ -2,7 +2,7 @@
 
 [<img src="https://opensourcelogos.aws.dmtech.cloud/dmTECH_opensource_logo.svg" height="20" width="130">](https://www.dmtech.de/de)
 [![Build Status](https://github.com/dm-drogeriemarkt/retrylib-spring-boot-starter/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/dm-drogeriemarkt/retrylib-spring-boot-starter/actions?query=branch%3Amaster)
-
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.dm.retrylib/retrylib-spring-boot-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/retrylib-spring-boot-starter/structured-logging)
 
 dm retrylib offers a Java-based in-memory retry mechanism needed for all situations where calls to external services can fail and should be retried periodically until they proceed successfully. 
 
@@ -20,7 +20,7 @@ First, include the dm retrylib Spring Boot Starter dependency in your pom.xml:
         <dependency>
             <groupId>de.dm.retrylib</groupId>
             <artifactId>retrylib-spring-boot-starter</artifactId>
-            <version>2.0.0</version>
+            <version>3.0.2</version>
          </dependency>
     </dependencies>
 </project>
