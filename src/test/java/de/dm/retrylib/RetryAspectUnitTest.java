@@ -34,12 +34,10 @@ class RetryAspectUnitTest {
     @Test
     void runWithRetryRequeuesInvocationOnError() throws Throwable {
         ProceedingJoinPoint proceedingJoinPoint = mock(ProceedingJoinPoint.class);
-        doThrow(new UnknownError("Testerror")).when(proceedingJoinPoint).proceed();
         String payload = "payload";
         Object[] invocationArguments = new Object[1];
         invocationArguments[0] = payload;
-        when(proceedingJoinPoint.getArgs()).thenReturn(invocationArguments);
-        when(proceedingJoinPoint.getTarget()).thenReturn(retryHandler);
+        setupJoinPointGetTargetAndProceedAndGetArgsStubs(proceedingJoinPoint, invocationArguments, new UnknownError("Testerror"));
 
         Assertions.assertThrows(UnknownError.class, () -> retryAspect.runWithRetry(proceedingJoinPoint));
 
@@ -50,12 +48,10 @@ class RetryAspectUnitTest {
     @Test
     void runWithRetryRequeuesInvocationOnThrowable() throws Throwable {
         ProceedingJoinPoint proceedingJoinPoint = mock(ProceedingJoinPoint.class);
-        doThrow(new Throwable("TestThrowable")).when(proceedingJoinPoint).proceed();
         String payload = "payload";
         Object[] invocationArguments = new Object[1];
         invocationArguments[0] = payload;
-        when(proceedingJoinPoint.getArgs()).thenReturn(invocationArguments);
-        when(proceedingJoinPoint.getTarget()).thenReturn(retryHandler);
+        setupJoinPointGetTargetAndProceedAndGetArgsStubs(proceedingJoinPoint, invocationArguments, new Throwable("TestThrowable"));
 
         Object returnValue = retryAspect.runWithRetry(proceedingJoinPoint);
         MatcherAssert.assertThat(returnValue, CoreMatchers.nullValue());
@@ -69,4 +65,9 @@ class RetryAspectUnitTest {
         retryAspect.retryableMethods();
     }
 
+    private void setupJoinPointGetTargetAndProceedAndGetArgsStubs(ProceedingJoinPoint proceedingJoinPoint, Object[] invocationArguments, Throwable proceedThrown) throws Throwable {
+        doThrow(proceedThrown).when(proceedingJoinPoint).proceed();
+        when(proceedingJoinPoint.getArgs()).thenReturn(invocationArguments);
+        when(proceedingJoinPoint.getTarget()).thenReturn(retryHandler);
+    }
 }
